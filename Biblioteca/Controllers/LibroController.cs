@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Biblioteca.Context;
 using Biblioteca.Entities;
@@ -12,25 +11,25 @@ namespace Biblioteca.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AutorController : ControllerBase
+    public class LibroController : ControllerBase
     {
         private readonly ApplicationDbContext context;
 
-        public AutorController(ApplicationDbContext context)
+        public LibroController(ApplicationDbContext context)
         {
             this.context = context;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Autor>> Get()
+        public ActionResult<IEnumerable<Libro>> Get()
         {
-            return context.Autores.ToList();
+            return context.Libros.ToList();
         }
 
-        [HttpGet("{id}", Name = "ObtenerAutor")]
-        public ActionResult<Autor> Get(int id)
+        [HttpGet("{id}", Name = "ObtenerLibro")]
+        public ActionResult<Libro> Get(int id)
         {
-            var result = context.Autores.FirstOrDefault(autor => autor.Id == id);
+            var result = context.Libros.FirstOrDefault(libro => libro.Id == id);
 
             if (result == null)
             {
@@ -41,16 +40,16 @@ namespace Biblioteca.Controllers
         }
 
         [HttpPost]
-        public ActionResult Post([FromBody] Autor autor)
+        public ActionResult Post([FromBody] Libro libro)
         {
-            context.Autores.Add(autor);
+            context.Libros.Add(libro);
             context.SaveChanges();
 
-            return new CreatedAtRouteResult("ObtenerAutor", new { id = autor.Id }, autor);
+            return new CreatedAtRouteResult("ObtenerLibro", new { id = libro.Id }, libro);
         }
 
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Autor value)
+        public ActionResult Put(int id, [FromBody] Libro value)
         {
             if (id != value.Id)
             {
@@ -64,16 +63,16 @@ namespace Biblioteca.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult<Autor> Delete(int id)
+        public ActionResult<Libro> Delete(int id)
         {
-            var resultado = context.Autores.FirstOrDefault(autor => autor.Id == id);
+            var resultado = context.Libros.FirstOrDefault(libro => libro.Id == id);
 
             if (resultado == null)
             {
                 return NotFound();
             }
 
-            context.Autores.Remove(resultado);
+            context.Libros.Remove(resultado);
             context.SaveChanges();
 
             return resultado;
