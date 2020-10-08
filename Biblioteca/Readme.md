@@ -162,3 +162,56 @@ public ActionResult<Autor> Delete(int id)
 </code></pre>
 
 Pasemos ahora a generar nuestra segunda entidad Libro para hacer las uniones con nuestros autores, siguiendo los mismos pasos (podemos ignorar el 3 y el 4).
+
+--
+
+Si al decorador del metodo lo iniciamos con una barra, hacemos que ignore todo el routeo del controlador para que inicie desde la raiz. Por ejemplo asi
+<pre><code>
+[HttpGet("/primer")]
+</code></pre>
+
+# Error de referencia ciclica
+
+Debemos instalar el paquete NuGet Microsoft.AspNetCore.Mvc.NewtonsoftJson
+
+# Llamadas asincronicas
+
+Agregamos al metodo que necesitemos que sea asincrono la palabra reservada async, que devuelve un objeto Task, y a su vez al retorno le agregamos await y que llame a un metodo asincrono.
+Por ejemplo:
+<pre><code>
+public async Task<ActionResult<IEnumerable<Autor>>> GetAsync() // el metodo incluye async y devuelve un objeto Task<T>
+{
+    return await context.Autores.Include(x => x.Libros).ToListAsync(); // el retorno pide esperar al resultado, y en lugar de llamar al ToList() llama a ToListAsync()
+}
+</code></pre>
+
+# Otros decoradores para atributos de las entidades
+
+<code>
+[Range(18, 120)] // agrega un rango numeral minimo y maximo
+public int Edad { get; set; }
+[CreditCard] // le da formato de tarjeta de credito
+public string TarjetaCredito { get; set; }
+[EmailAddress] // formato para direcciones de mail
+public string Email { get; set; }
+[Url] // formato para direcciones web
+public string Url { get; set; }
+</code>
+
+* Validadores
+
+1. A la entidad a la que queremos agregar un validador le hacemos que herede la interfaz IValidatableObject, que debera implementar su metodo correspondiente
+
+<code>
+public class Autor : IValidatableObject
+{
+    [PrimeraLetraMayuscula]
+    [StringLength(30, ErrorMessage = "El nombre del autor puede tener hasta {1} caracteres")]
+    public string Nombre { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        throw new NotImplementedException();
+    }
+}
+</code>

@@ -6,6 +6,7 @@ using Biblioteca.Context;
 using Biblioteca.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Controllers
 {
@@ -23,7 +24,7 @@ namespace Biblioteca.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Libro>> Get()
         {
-            return context.Libros.ToList();
+            return context.Libros.Include(x => x.Autor).ToList();
         }
 
         [HttpGet("{id}", Name = "ObtenerLibro")]

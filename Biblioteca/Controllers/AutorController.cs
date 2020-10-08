@@ -7,6 +7,7 @@ using Biblioteca.Context;
 using Biblioteca.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Biblioteca.Controllers
 {
@@ -24,7 +25,19 @@ namespace Biblioteca.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Autor>> Get()
         {
-            return context.Autores.ToList();
+            return context.Autores.Include(x => x.Libros).ToList();
+        }
+
+        [HttpGet("async")]
+        public async Task<ActionResult<IEnumerable<Autor>>> GetAsync()
+        {
+            return await context.Autores.Include(x => x.Libros).ToListAsync();
+        }
+
+        [HttpGet("/primer")]
+        public ActionResult<Autor> GetAlRoot()
+        {
+            return context.Autores.FirstOrDefault();
         }
 
         [HttpGet("{id}", Name = "ObtenerAutor")]
