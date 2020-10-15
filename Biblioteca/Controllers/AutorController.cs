@@ -5,6 +5,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Biblioteca.Context;
 using Biblioteca.Entities;
+using Biblioteca.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -38,6 +40,23 @@ namespace Biblioteca.Controllers
         public ActionResult<Autor> GetAlRoot()
         {
             return context.Autores.FirstOrDefault();
+        }
+
+        [HttpGet("/cache")]
+        [ResponseCache(Duration = 15)]
+        [Authorize]
+        [ServiceFilter(typeof(FiltroPersonalizadoDeAccion))]
+        public ActionResult<string> GetTime()
+        {
+            var resultado = DateTime.Now.Second.ToString();
+            return resultado;
+        }
+
+        [HttpGet("/error")]
+        [ServiceFilter(typeof(FiltroDeExcepcion))]
+        public ActionResult<string> GetError()
+        {
+            throw new NotImplementedException();
         }
 
         [HttpGet("{id}", Name = "ObtenerAutor")]

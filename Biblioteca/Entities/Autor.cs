@@ -15,8 +15,8 @@ namespace Biblioteca.Entities
         [StringLength(30, ErrorMessage = "El nombre del autor puede tener hasta {1} caracteres")]
         public string Nombre { get; set; }
         public List<Libro> Libros { get; set; }
-        [Range(18, 120)]
-        public int Edad { get; set; }
+        //[Range(18, 120)]
+        //public int Edad { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

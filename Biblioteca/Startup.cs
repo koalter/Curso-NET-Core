@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Biblioteca.Context;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Biblioteca.Helpers;
 
 namespace Biblioteca
 {
@@ -29,11 +31,14 @@ namespace Biblioteca
         {
             // Agregamos el contexto de la base de datos
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
+            services.AddScoped<FiltroPersonalizadoDeAccion>();
+            services.AddResponseCaching();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddControllers()
-                .AddNewtonsoftJson(x => { 
-                    x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; 
-                }); // Agregamos la referencia al newtonsoft para evitar la referencia ciclica
-
+                .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); 
+                // Agregamos la referencia al newtonsoft para evitar la referencia ciclica
+            services.AddMvc(Options => Options.Filters.Add(new FiltroDeExcepcion())); // Agregamos la referencia al filtro de excepcion
+            
             //services.AddControllers();
         }
 
@@ -48,6 +53,10 @@ namespace Biblioteca
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseResponseCaching();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
