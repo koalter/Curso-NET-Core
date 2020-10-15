@@ -255,6 +255,60 @@ public ActionResult<string> GetTime()
     - Microsoft.AspNetCore.Mvc.Filters --> ExceptionFilterAttribute
 5. Filtros de resultado
 
-# Trabajo con recursos
+--
 
+# Transferencia de datos
 
+Uso de DTO
+
+Generamos la carpeta Models y dentro creamos nuestras clases Dto, AutorDto y LibroDto
+<pre><code>
+namespace Biblioteca.Models
+{
+    public class AutorDto
+    {
+        public int Id { get; set; }
+        
+        [Required]
+        public string Nombre { get; set; }
+
+        public DateTime FechaNacimiento { get; set; }
+
+        public List<LibroDto> Libros { get; set; }
+    }
+}
+</code></pre>
+
+Automapper en Package Manager Console:
+<pre>
+PM> Install-Package Automapper.Extensions.Microsoft.DependencyInjection
+</pre>
+
+Y agregar la referencia en el Startup
+<code>
+services.AddAutomapper(typeof(Startup));
+</code>
+
+Añadimos el atributo en nuestro AutorController y sus referencias al constructor
+<pre><code>
+private readonly ApplicationDbContext context;
+private readonly IMapper mapper; // Agregamos el atributo
+
+public AutorController(ApplicationDbContext context, IMapper mapper) // y en el constructor la referencia
+{
+    this.context = context;
+    this.mapper = mapper;
+}
+</code></pre>
+
+Hacemos que nuestra API maneje la data por medio del dto y el mapper:
+<pre><code>
+[HttpGet("listado")]
+public ActionResult<IEnumerable<AutorDto>> GetListado() // El endpoint devolverá una lista de AutorDto en lugar de Autor
+{
+    var resultado = context.Autores.Include(x => x.Libros).ToList();
+    var autorDto = mapper.Map<List<AutorDto>>(resultado); // Generamos el mapeo
+
+    return autorDto; // devolvemos ese resultado
+}
+</code></pre>
