@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using AutoMapper;
 using Biblioteca.Context;
 using Biblioteca.Entities;
 using Biblioteca.Helpers;
+using Biblioteca.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,16 +20,28 @@ namespace Biblioteca.Controllers
     public class AutorController : ControllerBase
     {
         private readonly ApplicationDbContext context;
+        private readonly IMapper mapper;
 
-        public AutorController(ApplicationDbContext context)
+        public AutorController(ApplicationDbContext context, IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<Autor>> Get()
         {
             return context.Autores.Include(x => x.Libros).ToList();
+        }
+
+        [HttpGet("listado")]
+        [ServiceFilter(typeof(FiltroPersonalizadoDeAccion))]
+        public ActionResult<IEnumerable<AutorDto>> GetListado()
+        {
+            var resultado = context.Autores.Include(x => x.Libros).ToList();
+            var autorDto = mapper.Map<List<AutorDto>>(resultado);
+
+            return autorDto;
         }
 
         [HttpGet("async")]

@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Biblioteca.Helpers;
+using AutoMapper;
 
 namespace Biblioteca
 {
@@ -29,16 +30,22 @@ namespace Biblioteca
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Agregamos el contexto de la base de datos
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
+            services.AddAutoMapper(configuration =>
+            {
+                configuration.CreateMap(typeof(Autor), typeof(AutorDto));
+            });
             services.AddScoped<FiltroPersonalizadoDeAccion>();
             services.AddResponseCaching();
+
+            // Agregamos el contexto de la base de datos
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             services.AddControllers()
                 .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); 
                 // Agregamos la referencia al newtonsoft para evitar la referencia ciclica
             services.AddMvc(Options => Options.Filters.Add(new FiltroDeExcepcion())); // Agregamos la referencia al filtro de excepcion
             
+
             //services.AddControllers();
         }
 
