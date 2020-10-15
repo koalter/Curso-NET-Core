@@ -215,3 +215,46 @@ public class Autor : IValidatableObject
     }
 }
 </code>
+
+--
+
+services.AddTransient(); --> Por lo general no es buena practica utilizar este, porque siempre genera una nueva instancia
+services.AddSingleton();
+
+# Middlewares
+
+Son aplicaciones que se ejecutan en el medio de nuestro WebAPI y el cliente, por medio de pipelines, principalmente para hacer validaciones y autenticaciones.
+
+* Cache
+
+En el Startup agregamos por un lado, en ConfigureServices() la llamada a services.AddResponseCaching(); 
+
+En cuanto al Configure, lo utilizamos como app.UseResponseCaching();
+
+Ponemos en práctica el cacheo con un nuevo endpoint, similar al que tenemos debajo (probar con IE):
+
+<code>
+[HttpGet("/cache")]
+[ResponseCache(Duration = 15)]
+public ActionResult<string> GetTime()
+{
+    var resultado = DateTime.Now.Second.ToString();
+    return resultado;
+}
+</code>
+
+* Filtros
+
+1. Filtros de autorización
+    - Microsoft.AspNetCore.Authentication.JwtBearer
+2. Filtros de recurso
+3. Filtros de acción
+    - Microsoft.AspNetCore.Mvc.Filters --> IActionFilter
+    (Ver Biblioteca/Helpers/FiltroPersonalizadoDeAccion.cs)
+4. Filtros de excepción
+    - Microsoft.AspNetCore.Mvc.Filters --> ExceptionFilterAttribute
+5. Filtros de resultado
+
+# Trabajo con recursos
+
+
