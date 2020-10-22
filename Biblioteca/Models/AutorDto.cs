@@ -16,6 +16,6 @@ namespace Biblioteca.Models
 
         public DateTime FechaNacimiento { get; set; }
 
-        public List<LibroDto> Libros { get; set; }
+        //public List<LibroDto> Libros { get; set; }
     }
 }

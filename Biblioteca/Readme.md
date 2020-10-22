@@ -312,3 +312,26 @@ public ActionResult<IEnumerable<AutorDto>> GetListado() // El endpoint devolverá
     return autorDto; // devolvemos ese resultado
 }
 </code></pre>
+
+--
+
+# CORS
+
+Es una seguridad añadida para que por defecto no cualquier fuente externa pueda consumir mi API. 
+
+Para dar autorización de uso podemos hacerlo siguiendo estos pasos.
+
+1. En la Configuration del Startup agregamos al Cors
+<pre><code>
+services.AddCors();
+</code></pre>
+
+2. Asimismo, utilizaremos el Cors con el metodo UseCors referenciando a la web origen
+<pre><code>
+app.UseCors(builder => builder.WithOrigins("http://www.apirequest.io"));
+</code></pre>
+
+2b. Tambien podemos especificar los metodos que queremos autorizar y las cabeceras, como en el ejemplo siguiente
+<pre><code>
+app.UseCors(builder => builder.WithOrigins("http://www.apirequest.io").WithMethods("GET").AllowAnyHeader());
+</code></pre>

@@ -15,6 +15,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Biblioteca.Helpers;
 using AutoMapper;
+using Biblioteca.Models;
+using Biblioteca.Entities;
 
 namespace Biblioteca
 {
@@ -30,10 +32,19 @@ namespace Biblioteca
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddCors();
+            services.AddCors(options => options.AddPolicy("PermitirApiRequest", builder => builder.WithOrigins("http://www.apirequest.io").WithMethods("GET", "POST").AllowAnyHeader()));
             services.AddAutoMapper(configuration =>
             {
-                configuration.CreateMap(typeof(Autor), typeof(AutorDto));
-            });
+                //configuration.CreateMap(typeof(Libro), typeof(LibroDto));
+                configuration.CreateMap<Libro, LibroDto>();
+            }, typeof(Startup));
+            services.AddAutoMapper(configuration =>
+            {
+                //configuration.CreateMap(typeof(Autor), typeof(AutorDto));
+                configuration.CreateMap<Autor, AutorDto>();
+            }, typeof(Startup));
+
             services.AddScoped<FiltroPersonalizadoDeAccion>();
             services.AddResponseCaching();
 
@@ -66,6 +77,10 @@ namespace Biblioteca
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            //app.UseCors(builder => builder.WithOrigins("http://www.apirequest.io"));
+            //app.UseCors(builder => builder.WithOrigins("http://www.apirequest.io").WithMethods("GET").AllowAnyHeader());
+            app.UseCors(); // Se puede utilizar asi en conjunto con la linea 36
 
             app.UseEndpoints(endpoints =>
             {

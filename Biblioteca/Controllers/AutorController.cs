@@ -9,6 +9,7 @@ using Biblioteca.Entities;
 using Biblioteca.Helpers;
 using Biblioteca.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ namespace Biblioteca.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("PermitirApiRequest")]
     public class AutorController : ControllerBase
     {
         private readonly ApplicationDbContext context;

@@ -20,7 +20,15 @@ namespace Biblioteca.Entities
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            throw new NotImplementedException();
+            if (!string.IsNullOrEmpty(Nombre))
+            {
+                var primeraLetra = Nombre.ToString()[0].ToString();
+
+                if (primeraLetra != primeraLetra.ToUpper())
+                {
+                    yield return new ValidationResult("Valida Modelo: La primera letra debe ser en mayúscula!", new string[] { nameof(Nombre) });
+                }
+            }
         }
     }
 }
